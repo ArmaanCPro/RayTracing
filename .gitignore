@@ -2,6 +2,10 @@
 .vs/
 bin/
 bin-int/
+.idea/
+.cache/
+.fleet/
+.vscode/
 
 # Files
 *.vcxproj
