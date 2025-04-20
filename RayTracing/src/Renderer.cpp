@@ -80,15 +80,16 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
         float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDirection), 0.1f);
 
         const Sphere& sphere = m_ActiveScene->Spheres[payload.ObjectIndex];
-        glm::vec3 sphereColor = sphere.Mat.Albedo;
+        const Material& material = m_ActiveScene->Materials[sphere.MaterialIndex];
+        glm::vec3 sphereColor = material.Albedo;
         sphereColor *= lightIntensity;
-        //color += sphereColor * multiplier;
+        color += sphereColor * multiplier;
 
         multiplier *= 0.5f;
 
         ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
         ray.Direction = glm::reflect(ray.Direction,
-            payload.WorldNormal + sphere.Mat.Roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
+            payload.WorldNormal + material.Roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
     }
     
     return { color, 1.0f };
