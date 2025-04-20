@@ -7,6 +7,8 @@
 
 #include "Renderer.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 using namespace Walnut;
 
 class ExampleLayer : public Walnut::Layer
@@ -20,6 +22,7 @@ public:
 		{
 			Render();
 		}
+		ImGui::DragFloat3("Sphere Color", glm::value_ptr(m_Renderer.GetSphereColor()), 0.005f);
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });

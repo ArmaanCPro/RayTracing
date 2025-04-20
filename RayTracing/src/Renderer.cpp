@@ -80,20 +80,20 @@ glm::vec4 Renderer::PerPixel(glm::vec2 coord)
     
     if (tClosest > 0.0f)
     {
-        glm::vec3 hitPoint = rayOrigin + tClosest * rayDirection;
+        glm::vec3 hitPoint = rayOrigin + rayDirection * tClosest;
         glm::vec3 hitNormal = glm::normalize(hitPoint);
         
         const glm::vec3 lightDirection = glm::normalize(glm::vec3(-1.0f, -1.0f, -1.0f));
         float lightIntensity = glm::dot(hitNormal, -lightDirection);
-        lightIntensity = glm::max(0.1f, lightIntensity);
+        lightIntensity = glm::max(0.0f, lightIntensity);
         
-        return glm::vec4(glm::vec3(1, 0, 1) * lightIntensity, 1.0f);
+        return { m_SphereColor * lightIntensity, 1.0f };
     }
     
     // back face
     else if (tFar > 0.0f)
     {
-        return { 1, 0, 1, 1 };
+        return { m_SphereColor, 1 };
     }
 
     return { 0, 0, 0, 1 }; // 0xff000000

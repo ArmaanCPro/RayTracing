@@ -4,11 +4,6 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-#include "Walnut/Random.h"
-#include "Walnut/Random.h"
-#include "Walnut/Random.h"
-#include "Walnut/Random.h"
-
 class Renderer
 {
 public:
@@ -18,10 +13,12 @@ public:
     void Render();
     
     std::shared_ptr<Walnut::Image> GetFinalImage() const { return m_FinalImage; }
+    glm::vec3& GetSphereColor() { return m_SphereColor; }
 
 private:
     glm::vec4 PerPixel(glm::vec2 coord);
 private:
     std::shared_ptr<Walnut::Image> m_FinalImage;
     uint32_t* m_ImageData = nullptr;
+    glm::vec3 m_SphereColor = { 1, 0, 1 };
 };
