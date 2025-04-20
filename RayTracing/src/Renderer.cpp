@@ -16,6 +16,29 @@ namespace Utils
 
         return (a << 24) | (b << 16) | (g << 8) | r;
     }
+
+    // comparable to wang_hash, but apparently better in performance & statistical distribution
+    static uint32_t PCG_Hash(uint32_t input)
+    {
+        uint32_t state = input * 747797405u + 2891336453u;
+        uint32_t word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+        return (word >> 22u) ^ word;
+    }
+
+    static float RandomFloat(uint32_t& seed)
+    {
+        seed = PCG_Hash(seed);
+        return (float)seed / (float)std::numeric_limits<uint32_t>::max();
+    }
+
+    static glm::vec3 InUnitSphere(uint32_t& seed)
+    {
+        return glm::normalize(glm::vec3(
+            RandomFloat(seed) * 2.0f - 1.0f,
+            RandomFloat(seed) * 2.0f - 1.0f,
+            RandomFloat(seed) * 2.0f - 1.0f)
+        );
+    }
 }
 
 void Renderer::OnResize(uint32_t width, uint32_t height)
@@ -107,10 +130,15 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 
     glm::vec3 light {0.0f};
     glm::vec3 contribution {1.0f};
+
+    uint32_t seed = x + y * m_FinalImage->GetWidth();
+    seed *= m_FrameIndex;
     
     constexpr int bounces = 5;
     for (int i = 0; i < bounces; ++i)
     {
+        seed += i;
+        
         Renderer::HitPayload payload = TraceRay(ray);
         if (payload.HitDistance < 0)
         {
@@ -124,9 +152,12 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
         
         contribution *= material.Albedo;
         light += material.GetEmission();
-
+        
         ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
-        ray.Direction = glm::normalize(payload.WorldNormal + Walnut::Random::InUnitSphere());
+        if (m_Settings.SlowRandom)
+            ray.Direction = glm::normalize(payload.WorldNormal + Walnut::Random::InUnitSphere());
+        else
+            ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
     }
     
     return { light, 1.0f };
