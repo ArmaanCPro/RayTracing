@@ -19,7 +19,23 @@ public:
 	ExampleLayer()
 		:
 		m_Camera(45.0f, 0.1f, 100.0f)
-	{}
+	{
+		{
+			Sphere sphere;
+			sphere.Position = { 0.0f, 0.0f, 0.0f };
+			sphere.Radius = 0.5f;
+			sphere.Albedo = { 1.0f, 0.0f, 1.0f };
+			m_Scene.Spheres.push_back(sphere);
+		}
+		
+		{
+			Sphere sphere;
+			sphere.Position = { 1.0f, 0.0f, -5.0f };
+			sphere.Radius = 1.5f;
+			sphere.Albedo = { 0.2f, 0.3f, 1.0f };
+			m_Scene.Spheres.push_back(sphere);
+		}
+	}
 	
 	virtual void OnUpdate(float ts) override
 	{
@@ -34,8 +50,27 @@ public:
 		{
 			Render();
 		}
-		ImGui::DragFloat3("Sphere Color", glm::value_ptr(m_Renderer.GetSphereColor()), 0.005f);
 		ImGui::End();
+
+		
+		ImGui::Begin("Scene");
+		
+		for (size_t i = 0; i < m_Scene.Spheres.size(); ++i)
+		{
+			ImGui::PushID(i);
+			
+			Sphere& sphere = m_Scene.Spheres[i];
+			ImGui::DragFloat3("Sphere Position", glm::value_ptr(sphere.Position), 0.1f);
+			ImGui::DragFloat("Sphere Radius", &sphere.Radius, 0.01f);
+			ImGui::ColorEdit3("Sphere Color", glm::value_ptr(sphere.Albedo));
+
+			ImGui::Separator();
+			
+			ImGui::PopID();
+		}
+
+		ImGui::End();
+		
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
@@ -60,7 +95,7 @@ public:
 
 		m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
 		m_Camera.OnResize(m_ViewportWidth, m_ViewportHeight);
-		m_Renderer.Render(m_Camera);
+		m_Renderer.Render(m_Scene, m_Camera);
 
 		m_LastRenderTime = timer.ElapsedMillis();
 	}
@@ -68,6 +103,7 @@ public:
 private:
 	Renderer m_Renderer;
 	Camera m_Camera;
+	Scene m_Scene;
 	uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 	float m_LastRenderTime = 0.0f;
 };

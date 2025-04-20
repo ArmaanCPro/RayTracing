@@ -18,7 +18,7 @@ Camera::Camera(float verticalFOV, float nearClip, float farClip)
 void Camera::OnUpdate(float ts)
 {
 	glm::vec2 mousePos = Input::GetMousePosition();
-	glm::vec2 delta = (mousePos - m_LastMousePosition) * 0.002f;
+	glm::vec2 delta = (mousePos - m_LastMousePosition) * 0.008f;
 	m_LastMousePosition = mousePos;
 
 	if (!Input::IsMouseButtonDown(MouseButton::Right))
