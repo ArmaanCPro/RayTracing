@@ -17,8 +17,8 @@ static constexpr SDL_GPUTextureFormat ConvertToGPUFormat(ImageFormat format)
 Image::Image(SDL_GPUDevice* gpu, uint32_t width, uint32_t height, ImageFormat format, const void* data)
     :
     m_GPU(gpu),
-    m_Width(width == 0 ? 1 : width),
-    m_Height(height == 0 ? 1 : height),
+    m_Width(width),
+    m_Height(height),
     m_Format(format)
 {
     Allocate();
@@ -40,6 +40,7 @@ void Image::Resize(uint32_t newWidth, uint32_t newHeight)
     m_Height = newHeight;
 
     Release();
+
     Allocate();
 }
 
@@ -94,6 +95,11 @@ void Image::SetData(const void *data)
 
 void Image::Allocate()
 {
+    if (m_Width == 0 || m_Height == 0)
+    {
+        return;
+    }
+
     SDL_GPUTextureCreateInfo ci{};
     ci.format = ConvertToGPUFormat(m_Format);
     ci.width = m_Width;

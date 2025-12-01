@@ -142,8 +142,8 @@ int main()
 
     // Cleanup
     SDL_WaitForGPUIdle(gpuDevice);
-    ImGui_ImplSDL3_Shutdown();
     ImGui_ImplSDLGPU3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 
     SDL_ReleaseWindowFromGPUDevice(gpuDevice, window);

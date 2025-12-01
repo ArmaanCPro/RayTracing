@@ -78,11 +78,19 @@ void Renderer::OnResize(uint32_t width, uint32_t height)
 
 void Renderer::Render(const Scene& scene, const Camera& camera)
 {
+    // sdl gpu doesn't support images of 0 size, and we don't even need to render
+    if (m_FinalImage->GetWidth() == 0 || m_FinalImage->GetHeight() == 0)
+    {
+        return;
+    }
+
     m_ActiveScene = &scene;
     m_ActiveCamera = &camera;
     
     if (m_FrameIndex == 1)
+    {
         memset(m_AccumulationData, 0, sizeof(glm::vec4) * m_FinalImage->GetWidth() * m_FinalImage->GetHeight());
+    }
 
 #define MT 1
 #if MT
@@ -159,7 +167,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
         ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
         if (m_Settings.SlowRandom)
         {
-            std::cout << "Slow random not supported currently, using normal random\n";
+            // TODO support slow random
             //ray.Direction = glm::normalize(payload.WorldNormal + Walnut::Random::InUnitSphere());
             ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
         }

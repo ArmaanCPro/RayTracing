@@ -23,6 +23,7 @@ CPMAddPackage("gh:libsdl-org/SDL#release-3.2.26")
 # the bs we have to go through to include imgui (-_-)... CMake integration PR??
 add_library(ImGui STATIC
         ${imgui_SOURCE_DIR}/imgui.cpp
+        ${imgui_SOURCE_DIR}/imgui_demo.cpp
         ${imgui_SOURCE_DIR}/imgui_draw.cpp
         ${imgui_SOURCE_DIR}/imgui_widgets.cpp
         ${imgui_SOURCE_DIR}/imgui_tables.cpp

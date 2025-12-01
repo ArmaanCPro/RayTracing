@@ -123,7 +123,7 @@ public:
 		auto image = m_Renderer.GetFinalImage();
 		if (image)
 		{
-		    ImGui::Image((ImTextureID)(intptr_t)image.get(),
+		    ImGui::Image((ImTextureID)(intptr_t)(image->GetTexture()),
 		        { (float)image->GetWidth(), (float)image->GetHeight() },
                 ImVec2(0, 1), ImVec2(1, 0));
 		}

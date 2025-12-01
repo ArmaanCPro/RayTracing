@@ -34,7 +34,7 @@ bool Camera::OnUpdate(float ts, SDL_Window* window, const bool* keyboardState)
 	constexpr glm::vec3 upDirection(0.0f, 1.0f, 0.0f);
 	glm::vec3 rightDirection = glm::cross(m_ForwardDirection, upDirection);
 
-	float speed = 5.0f;
+	float speed = 0.01f;
 
 	// Movement
 	if (keyboardState[SDL_SCANCODE_W])
