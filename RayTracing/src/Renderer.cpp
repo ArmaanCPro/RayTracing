@@ -1,9 +1,9 @@
 ﻿#include "Renderer.h"
 
 #include "Camera.h"
-#include "Walnut/Random.h"
 
 #include <execution>
+#include <iostream>
 
 namespace Utils
 {
@@ -53,13 +53,16 @@ void Renderer::OnResize(uint32_t width, uint32_t height)
     }
     else
     {
-        m_FinalImage = std::make_shared<Walnut::Image>(width, height, Walnut::ImageFormat::RGBA);   
+        m_FinalImage = std::make_shared<Image>(m_GPU, width, height, ImageFormat::RGBA);
     }
     
     delete[] m_ImageData;
     m_ImageData = new uint32_t[width * height];
 
-    delete[] m_AccumulationData;
+    if (m_AccumulationData)
+    {
+        delete[] m_AccumulationData;
+    }
     m_AccumulationData = new glm::vec4[width * height];
 
     m_ImageHorizontalIter.resize(width);
@@ -155,7 +158,11 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
         
         ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
         if (m_Settings.SlowRandom)
-            ray.Direction = glm::normalize(payload.WorldNormal + Walnut::Random::InUnitSphere());
+        {
+            std::cout << "Slow random not supported currently, using normal random\n";
+            //ray.Direction = glm::normalize(payload.WorldNormal + Walnut::Random::InUnitSphere());
+            ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
+        }
         else
             ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
     }
@@ -223,9 +230,9 @@ Renderer::HitPayload Renderer::ClosestHit(const Ray& ray, float hitDistance, int
     return payload;
 }
 
-Renderer::HitPayload Renderer::Miss(const Ray& ray)
+Renderer::HitPayload Renderer::Miss([[maybe_unused]] const Ray& ray)
 {
-    Renderer::HitPayload payload;
+    Renderer::HitPayload payload{};
     payload.HitDistance = -1;
     return payload;
 }

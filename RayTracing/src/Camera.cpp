@@ -4,9 +4,8 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include "Walnut/Input/Input.h"
-
-using namespace Walnut;
+#include "SDL3/SDL_mouse.h"
+#include "SDL3/SDL_stdinc.h"
 
 Camera::Camera(float verticalFOV, float nearClip, float farClip)
 	: m_VerticalFOV(verticalFOV), m_NearClip(nearClip), m_FarClip(farClip)
@@ -15,19 +14,20 @@ Camera::Camera(float verticalFOV, float nearClip, float farClip)
 	m_Position = glm::vec3(0, 0, 6);
 }
 
-bool Camera::OnUpdate(float ts)
+bool Camera::OnUpdate(float ts, SDL_Window* window, const bool* keyboardState)
 {
-	glm::vec2 mousePos = Input::GetMousePosition();
+	glm::vec2 mousePos{};
+    Uint32 mouseButtonState = SDL_GetMouseState(&mousePos.x, &mousePos.y);
 	glm::vec2 delta = (mousePos - m_LastMousePosition) * 0.008f;
 	m_LastMousePosition = mousePos;
 
-	if (!Input::IsMouseButtonDown(MouseButton::Right))
+	if (mouseButtonState & SDL_BUTTON_RMASK)
 	{
-		Input::SetCursorMode(CursorMode::Normal);
+	    SDL_SetWindowRelativeMouseMode(window, false);
 		return false;
 	}
 
-	Input::SetCursorMode(CursorMode::Locked);
+    SDL_SetWindowRelativeMouseMode(window, true);
 
 	bool moved = false;
 
@@ -37,32 +37,32 @@ bool Camera::OnUpdate(float ts)
 	float speed = 5.0f;
 
 	// Movement
-	if (Input::IsKeyDown(KeyCode::W))
+	if (keyboardState[SDL_SCANCODE_W])
 	{
 		m_Position += m_ForwardDirection * speed * ts;
 		moved = true;
 	}
-	else if (Input::IsKeyDown(KeyCode::S))
+	else if (keyboardState[SDL_SCANCODE_S])
 	{
 		m_Position -= m_ForwardDirection * speed * ts;
 		moved = true;
 	}
-	if (Input::IsKeyDown(KeyCode::A))
+	if (keyboardState[SDL_SCANCODE_A])
 	{
 		m_Position -= rightDirection * speed * ts;
 		moved = true;
 	}
-	else if (Input::IsKeyDown(KeyCode::D))
+	else if (keyboardState[SDL_SCANCODE_D])
 	{
 		m_Position += rightDirection * speed * ts;
 		moved = true;
 	}
-	if (Input::IsKeyDown(KeyCode::Q))
+	if (keyboardState[SDL_SCANCODE_Q])
 	{
 		m_Position -= upDirection * speed * ts;
 		moved = true;
 	}
-	else if (Input::IsKeyDown(KeyCode::E))
+	else if (keyboardState[SDL_SCANCODE_E])
 	{
 		m_Position += upDirection * speed * ts;
 		moved = true;

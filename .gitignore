@@ -1,7 +1,6 @@
 # Directories
 .vs/
-bin/
-bin-int/
+build/
 .idea/
 .cache/
 .fleet/
@@ -14,6 +13,3 @@ bin-int/
 *.sln
 **.user
 imgui.ini
-
-# Exclude
-!vendor/bin

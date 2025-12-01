@@ -1,23 +1,18 @@
-#include "Walnut/Application.h"
-#include "Walnut/EntryPoint.h"
-
-#include "Walnut/Image.h"
-#include "Walnut/Random.h"
-#include "Walnut/Timer.h"
-
+#pragma once
+#include "Common.h"
 #include "Renderer.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Camera.h"
+#include "Timer.h"
 
-using namespace Walnut;
-
-class ExampleLayer : public Walnut::Layer
+class SphereLayer
 {
 public:
-	ExampleLayer()
+	SphereLayer(SDL_GPUDevice* gpu)
 		:
+        m_Renderer(gpu),
 		m_Camera(45.0f, 0.1f, 100.0f)
 	{
 		Material& pinkSphere = m_Scene.Materials.emplace_back();
@@ -59,13 +54,13 @@ public:
 		}
 	}
 	
-	virtual void OnUpdate(float ts) override
+	void OnUpdate(float ts, SDL_Window* window, const bool* keyboardState)
 	{
-		if (m_Camera.OnUpdate(ts))
+		if (m_Camera.OnUpdate(ts, window, keyboardState))
 			m_Renderer.ResetFrameIndex();
 	}
 	
-	virtual void OnUIRender() override
+	void OnUIRender()
 	{
 		ImGui::Begin("Settings");
 		ImGui::Text("Last Render Time: %.3fms", m_LastRenderTime);
@@ -122,13 +117,16 @@ public:
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 		ImGui::Begin("Viewport");
 		
-		m_ViewportWidth = ImGui::GetContentRegionAvail().x;
-		m_ViewportHeight = ImGui::GetContentRegionAvail().y;
+		m_ViewportWidth = static_cast<uint32_t>(ImGui::GetContentRegionAvail().x);
+		m_ViewportHeight = static_cast<uint32_t>(ImGui::GetContentRegionAvail().y);
 
 		auto image = m_Renderer.GetFinalImage();
 		if (image)
-			ImGui::Image(image->GetDescriptorSet(),  { (float)image->GetWidth(), (float)image->GetHeight() },
-				ImVec2(0, 1), ImVec2(1, 0));
+		{
+		    ImGui::Image((ImTextureID)(intptr_t)image.get(),
+		        { (float)image->GetWidth(), (float)image->GetHeight() },
+                ImVec2(0, 1), ImVec2(1, 0));
+		}
 		
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -144,7 +142,7 @@ public:
 		m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
 		m_Renderer.Render(m_Scene, m_Camera);
 
-		m_LastRenderTime = timer.ElapsedMillis();
+		m_LastRenderTime = static_cast<float>(timer.ElapsedMillis());
 	}
 
 private:
@@ -154,24 +152,3 @@ private:
 	uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 	float m_LastRenderTime = 0.0f;
 };
-
-Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
-{
-	Walnut::ApplicationSpecification spec;
-	spec.Name = "RayTracing";
-
-	Walnut::Application* app = new Walnut::Application(spec);
-	app->PushLayer<ExampleLayer>();
-	app->SetMenubarCallback([app]()
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Exit"))
-			{
-				app->Close();
-			}
-			ImGui::EndMenu();
-		}
-	});
-	return app;
-}

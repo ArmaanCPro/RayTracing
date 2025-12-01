@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Common.h"
 #include <glm/vec3.hpp>
 
 struct Ray
