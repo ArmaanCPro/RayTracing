@@ -5,6 +5,8 @@ build/
 .cache/
 .fleet/
 .vscode/
+.xmake/
+bin/
 
 # Files
 *.vcxproj
@@ -13,3 +15,4 @@ build/
 *.sln
 **.user
 imgui.ini
+compile_commands.json

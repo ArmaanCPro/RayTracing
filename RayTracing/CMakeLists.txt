@@ -16,28 +16,18 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-CPMAddPackage("gh:g-truc/glm#1.0.2")
-CPMAddPackage("gh:ocornut/imgui#docking@1.0.2")
-CPMAddPackage("gh:libsdl-org/SDL#release-3.2.26")
+find_package(imgui CONFIG REQUIRED)
+find_package(SDL3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
-# the bs we have to go through to include imgui (-_-)... CMake integration PR??
-add_library(ImGui STATIC
-        ${imgui_SOURCE_DIR}/imgui.cpp
-        ${imgui_SOURCE_DIR}/imgui_demo.cpp
-        ${imgui_SOURCE_DIR}/imgui_draw.cpp
-        ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-        ${imgui_SOURCE_DIR}/imgui_tables.cpp
+target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui SDL3::SDL3 glm::glm)
 
-        ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
-        ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlgpu3.cpp
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_custom_command(
+        TARGET ${PROJECT_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+                "${CMAKE_BINARY_DIR}/compile_commands.json"
+                "${CMAKE_SOURCE_DIR}/compile_commands.json"
+        COMMENT "Creating symlink for compile_commands.json in source dir"
 )
-
-target_include_directories(ImGui PUBLIC
-        ${imgui_SOURCE_DIR}
-        ${imgui_SOURCE_DIR}/backends
-        ${imgui_SOURCE_DIR}/../sdl-src/include
-)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm SDL3::SDL3 ImGui)
-
-
