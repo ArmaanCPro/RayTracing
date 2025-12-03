@@ -175,11 +175,12 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
         ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
         if (m_Settings.SlowRandom)
         {
-            ray.Direction = glm::normalize(payload.WorldNormal + Random::InUnitSphere());
+            // PCG is actually slower than xoshiro!
+            ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
         }
         else
         {
-            ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
+            ray.Direction = glm::normalize(payload.WorldNormal + Random::InUnitSphere());
         }
     }
     

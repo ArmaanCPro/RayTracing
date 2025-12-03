@@ -3,14 +3,15 @@
 #include "Common.h"
 #include <random>
 #include <limits>
+#include <xoshiro.h>
 
 namespace Random
 {
-    using RandomEngineT = std::mt19937;
-    using DistributionT = std::uniform_int_distribution<std::mt19937::result_type>;
+    using RandomEngineT = xso::rng32;
+    using DistributionT = std::uniform_int_distribution<RandomEngineT::result_type>;
 
     inline static thread_local std::mt19937 s_RandomEngine;
-    inline static thread_local std::uniform_int_distribution<std::mt19937::result_type> s_Distribution;
+    inline static thread_local std::uniform_int_distribution<RandomEngineT::result_type> s_Distribution;
 
     inline static void Init()
     {
