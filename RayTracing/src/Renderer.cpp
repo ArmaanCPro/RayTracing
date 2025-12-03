@@ -59,10 +59,7 @@ void Renderer::OnResize(uint32_t width, uint32_t height)
     delete[] m_ImageData;
     m_ImageData = new uint32_t[width * height];
 
-    if (m_AccumulationData)
-    {
-        delete[] m_AccumulationData;
-    }
+    delete[] m_AccumulationData;
     m_AccumulationData = new glm::vec4[width * height];
 
     m_ImageHorizontalIter.resize(width);
@@ -131,6 +128,12 @@ void Renderer::Render(const Scene& scene, const Camera& camera)
         m_FrameIndex++;
     else
         m_FrameIndex = 1;
+}
+
+void Renderer::OnFrameEnd()
+{
+    SDL_WaitForGPUIdle(m_GPU); // might be unnecessary
+    m_FinalImage->Cleanup();
 }
 
 glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)

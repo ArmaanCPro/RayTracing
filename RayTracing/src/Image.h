@@ -20,6 +20,8 @@ public:
     uint32_t GetWidth() const { return m_Width; }
     uint32_t GetHeight() const { return m_Height; }
 
+    void Cleanup();
+
 private:
     void Allocate();
     void Release();
@@ -29,4 +31,7 @@ private:
     SDL_GPUTexture* m_Texture = nullptr;
     uint32_t m_Width = 0, m_Height = 0;
     ImageFormat m_Format;
+
+    std::vector<std::function<void()>> m_CleanupTasks;
+    bool m_MarkedForResize = false;
 };

@@ -36,16 +36,25 @@ Image::~Image()
 
 void Image::Resize(uint32_t newWidth, uint32_t newHeight)
 {
+    if (m_Width == newWidth && m_Height == newHeight)
+    {
+        return; // no resize needed
+    }
+
     m_Width = newWidth;
     m_Height = newHeight;
 
-    Release();
-
-    Allocate();
+    m_MarkedForResize = true;
+    m_CleanupTasks.push_back([&]() { Release(); Allocate(); m_MarkedForResize = false; });
 }
 
 void Image::SetData(const void *data)
 {
+    if (m_MarkedForResize)
+    {
+        return;
+    }
+
     uint32_t uploadSize = m_Width * m_Height * 4; // 4 BPP for RGBA
 
     SDL_GPUTransferBufferCreateInfo tbci{};
@@ -91,6 +100,15 @@ void Image::SetData(const void *data)
 
     // we can release immediately, SDL internally tracks the resource usage until cmdBuf completes
     SDL_ReleaseGPUTransferBuffer(m_GPU, transferBuffer);
+}
+
+void Image::Cleanup()
+{
+    for (auto& task : m_CleanupTasks)
+    {
+        task();
+    }
+    m_CleanupTasks.resize(0);
 }
 
 void Image::Allocate()

@@ -22,6 +22,7 @@ public:
 
     void OnResize(uint32_t width, uint32_t height);
     void Render(const Scene& scene, const Camera& camera);
+    void OnFrameEnd();
     
     std::shared_ptr<Image> GetFinalImage() const { return m_FinalImage; }
 

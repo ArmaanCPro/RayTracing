@@ -145,6 +145,11 @@ public:
 		m_LastRenderTime = static_cast<float>(timer.ElapsedMillis());
 	}
 
+    void OnFrameEnd()
+	{
+	    m_Renderer.OnFrameEnd();
+	}
+
 private:
 	Renderer m_Renderer;
 	Camera m_Camera;

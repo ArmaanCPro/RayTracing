@@ -12,7 +12,7 @@
             "generator": "Ninja",
             "binaryDir": "build/${presetName}",
             "cacheVariables": {
-                "VCPKG_OVERLAY_PORTS": "overlays"
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/overlays"
             }
         },
         {

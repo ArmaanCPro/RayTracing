@@ -94,16 +94,16 @@ int main()
             continue;
         }
 
-        float ts = static_cast<float>(timestep.ElapsedMillis());
+        const auto ts = static_cast<float>(timestep.ElapsedMillis());
         timestep.Reset();
         keyboardState = SDL_GetKeyboardState(nullptr);
         layer.OnUpdate(ts, window, keyboardState);
+
 
         ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
-        layer.Render();
         layer.OnUIRender();
 
         ImGui::Render();
@@ -138,6 +138,7 @@ int main()
         }
 
         SDL_SubmitGPUCommandBuffer(commandBuf);
+        layer.OnFrameEnd();
     }
 
     // Cleanup
