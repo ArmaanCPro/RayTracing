@@ -5,6 +5,8 @@
 #include <execution>
 #include <iostream>
 
+#include "Random.h"
+
 namespace Utils
 {
     static uint32_t ConvertToRGBA(const glm::vec4& color)
@@ -157,7 +159,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
         if (payload.HitDistance < 0)
         {
             glm::vec3 skyColor = glm::vec3(0.6f, 0.7f, 0.9f);
-            //light += skyColor * contribution;
+            light += skyColor * contribution;
             break;
         }
 
@@ -170,12 +172,12 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
         ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
         if (m_Settings.SlowRandom)
         {
-            // TODO support slow random
-            //ray.Direction = glm::normalize(payload.WorldNormal + Walnut::Random::InUnitSphere());
-            ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
+            ray.Direction = glm::normalize(payload.WorldNormal + Random::InUnitSphere());
         }
         else
+        {
             ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
+        }
     }
     
     return { light, 1.0f };
