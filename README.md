@@ -17,4 +17,4 @@ To build, run:
 - `cmake --preset <preset, e.g. debug>`
 - `cmake --build ./build/<preset> --target RT`
 
-To run, you can run the executable located in the build directory~~~~.
+To run, you can run the executable located in the build director.

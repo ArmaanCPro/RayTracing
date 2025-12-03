@@ -71,6 +71,7 @@ public:
 		
 		ImGui::Checkbox("Accumulate", &m_Renderer.GetSettings().Accumulate);
 		ImGui::Checkbox("Slow Random", &m_Renderer.GetSettings().SlowRandom);
+	    ImGui::Checkbox("Enable Sky", &m_Renderer.GetSettings().EnableSky);
 		
 		if (ImGui::Button("Reset"))
 		{

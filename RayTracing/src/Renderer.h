@@ -15,6 +15,7 @@ public:
     {
         bool Accumulate = true;
         bool SlowRandom = false;
+        bool EnableSky = false;
     };
 public:
     Renderer(SDL_GPUDevice* gpuDevice)
