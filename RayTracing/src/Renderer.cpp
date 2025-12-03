@@ -134,7 +134,7 @@ void Renderer::Render(const Scene& scene, const Camera& camera)
 
 void Renderer::OnFrameEnd()
 {
-    SDL_WaitForGPUIdle(m_GPU); // might be unnecessary
+    //SDL_WaitForGPUIdle(m_GPU); // might be unnecessary
     m_FinalImage->Cleanup();
 }
 

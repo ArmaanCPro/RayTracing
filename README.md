@@ -1,6 +1,20 @@
-# Walnut App Template
+# RayTracing
+This is a software ray tracer.
+The dependencies are glm, imgui, and sdl3.
 
-This is a simple app template for [Walnut](https://github.com/TheCherno/Walnut) - unlike the example within the Walnut repository, this keeps Walnut as an external submodule and is much more sensible for actually building applications. See the [Walnut](https://github.com/TheCherno/Walnut) repository for more details.
+Although this project uses SDL GPU for rendering, the actual ray tracing is done on the CPU and rendered to the texture.
+If you encounter any bugs, please open an issue. In particular, if it does not build/run on your machine, let me know!
 
-## Getting Started
-Once you've cloned, you can customize the `premake5.lua` and `WalnutApp/premake5.lua` files to your liking (eg. change the name from "WalnutApp" to something else).  Once you're happy, run `scripts/Setup.bat` to generate Visual Studio 2022 solution/project files. Your app is located in the `WalnutApp/` directory, which some basic example code to get you going in `WalnutApp/src/WalnutApp.cpp`. I recommend modifying that WalnutApp project to create your own application, as everything should be setup and ready to go.
+Running in release mode is _highly_ recommended! `cmake --preset release` will do the trick.
+
+# BUILDING
+
+This project uses CMake with certain presets if you so desire.
+On Linux, you should prefer the `asan` preset, as it enables ASan and UBSan (GCC and Clang both support them).
+On Windows, you can select your preferred generator/compiler, i.e. `-G "Visual Studio 18 2026 -DCMAKE_CXX_COMPILER=cl.exe"`.
+
+To build, run:
+- `cmake --preset <preset, e.g. debug>`
+- `cmake --build ./build/<preset> --target RT`
+
+To run, you can run the executable located in the build directory~~~~.

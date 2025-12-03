@@ -31,3 +31,11 @@ add_custom_command(
                 "${CMAKE_SOURCE_DIR}/compile_commands.json"
         COMMENT "Creating symlink for compile_commands.json in source dir"
 )
+add_custom_command(
+        TARGET ${PROJECT_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_SOURCE_DIR}/imgui.ini"
+        "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini"
+        COMMENT "Copying imgui.ini into working directory"
+)

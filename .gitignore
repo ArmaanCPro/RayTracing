@@ -14,5 +14,4 @@ bin/
 *.vcxproj.filters
 *.sln
 **.user
-imgui.ini
 compile_commands.json
