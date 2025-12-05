@@ -23,6 +23,7 @@ bool Camera::OnUpdate(float ts, SDL_Window* window, const bool* keyboardState)
 
 	if (mouseButtonState & SDL_BUTTON_RMASK)
 	{
+	    SDL_SetWindowMouseRect(window, nullptr);
 	    SDL_SetWindowRelativeMouseMode(window, false);
 		return false;
 	}

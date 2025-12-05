@@ -10,6 +10,15 @@ If you encounter any bugs, please open an issue. In particular, if it does not b
 
 Running in release mode is _highly_ recommended! `cmake --preset release` will do the trick.
 
+# Usage
+There are settings in the left panel. These control the spheres (yes, there are 3 spheres).
+
+There are also some options in the right panel, feel free to play around with them.
+
+The camera can be moved around using **WASD** and **E/Q** shift the camera up and down respectively.
+
+Use the **Right Mouse Button** to enable the cursor. You may have to fiddle around with it. The mouse otherwise rotates the camera.
+
 # BUILDING
 
 This project uses CMake with certain presets if you so desire.
@@ -17,7 +26,7 @@ This project uses CMake with certain presets if you so desire.
 On Linux debug builds, you should prefer the `asan` preset, as it enables ASan and UBSan (GCC and Clang both support them).
 
 On Windows, you can select your preferred generator/compiler, i.e. `-G "Visual Studio 18 2026 -DCMAKE_CXX_COMPILER=cl.exe"`.
-_(To be well honest, on Windows you should use Ninja + cl.exe, both of which will be autodetected by any preset)_
+_(To be well honest, on Windows you should use Ninja + cl.exe, both of which will be autodetected by any preset, if you're not using Visual Studio)_
 
 To build, run:
 - `cmake --preset <preset, e.g. release>`
