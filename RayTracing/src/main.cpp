@@ -67,7 +67,6 @@ int main()
 
     SphereLayer layer{gpuDevice};
 
-
     bool running = true;
     SDL_Event event{};
     Timer timestep{};
@@ -103,6 +102,8 @@ int main()
         ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
+
+        ImGui::DockSpaceOverViewport();
 
         layer.OnUIRender();
 
