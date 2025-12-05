@@ -27,15 +27,12 @@ FetchContent_MakeAvailable(xoshiro)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui SDL3::SDL3 glm::glm xoshiro::xoshiro)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-add_custom_command(
-        TARGET ${PROJECT_NAME}
-        POST_BUILD
+execute_process(
         COMMAND ${CMAKE_COMMAND} -E create_symlink
                 "${CMAKE_BINARY_DIR}/compile_commands.json"
                 "${CMAKE_SOURCE_DIR}/compile_commands.json"
-        COMMENT "Creating symlink for compile_commands.json in source dir"
 )
+
 add_custom_command(
         TARGET ${PROJECT_NAME}
         POST_BUILD

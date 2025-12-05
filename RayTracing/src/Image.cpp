@@ -1,6 +1,7 @@
 #include "Image.h"
 
 #include <iostream>
+#include <cstring>
 
 static constexpr SDL_GPUTextureFormat ConvertToGPUFormat(ImageFormat format)
 {
