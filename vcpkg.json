@@ -11,13 +11,16 @@
         "sdlgpu3-binding"
       ]
     },
+    "sdl3",
     {
-        "name":"sdl3",
-        "features": [
-            "vulkan",
-            "wayland",
-            "x11"
-        ]
+        "name": "sdl3",
+        "features": ["wayland"],
+        "platform": "linux"
+    },
+    {
+        "name": "sdl3",
+        "features": ["vulkan", "x11"],
+        "platform": "!windows"
     },
     "glm"
   ],
