@@ -50,14 +50,14 @@ void Renderer::OnResize(uint32_t width, uint32_t height)
         // no resize necessary
         if (m_FinalImage->GetWidth() == width && m_FinalImage->GetHeight() == height)
             return;
-        
+
         m_FinalImage->Resize(width, height);
     }
     else
     {
         m_FinalImage = std::make_shared<Image>(m_GPU, width, height, ImageFormat::RGBA);
     }
-    
+
     delete[] m_ImageData;
     m_ImageData = new uint32_t[width * height];
 
@@ -68,7 +68,7 @@ void Renderer::OnResize(uint32_t width, uint32_t height)
     m_ImageHorizontalIter.shrink_to_fit();
     m_ImageVerticalIter.resize(height);
     m_ImageVerticalIter.shrink_to_fit();
-    
+
     for (uint32_t i = 0; i < width; ++i)
         m_ImageHorizontalIter[i] = i;
     for (uint32_t i = 0; i < height; ++i)
@@ -85,7 +85,7 @@ void Renderer::Render(const Scene& scene, const Camera& camera)
 
     m_ActiveScene = &scene;
     m_ActiveCamera = &camera;
-    
+
     if (m_FrameIndex == 1)
     {
         memset(m_AccumulationData, 0, sizeof(glm::vec4) * m_FinalImage->GetWidth() * m_FinalImage->GetHeight());
@@ -117,7 +117,7 @@ void Renderer::Render(const Scene& scene, const Camera& camera)
 
             glm::vec4 accumulatedColor = m_AccumulationData[x + y * m_FinalImage->GetWidth()];
             accumulatedColor /= (float)m_FrameIndex;
-            
+
             accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
             m_ImageData[x + y * m_FinalImage->GetWidth()] = Utils::ConvertToRGBA(accumulatedColor);
         }
@@ -149,12 +149,12 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 
     uint32_t seed = x + y * m_FinalImage->GetWidth();
     seed *= m_FrameIndex;
-    
+
     constexpr int bounces = 5;
     for (int i = 0; i < bounces; ++i)
     {
         seed += i;
-        
+
         Renderer::HitPayload payload = TraceRay(ray);
         if (payload.HitDistance < 0)
         {
@@ -168,22 +168,23 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 
         const Sphere& sphere = m_ActiveScene->Spheres[payload.ObjectIndex];
         const Material& material = m_ActiveScene->Materials[sphere.MaterialIndex];
-        
+
         contribution *= material.Albedo;
         light += material.GetEmission();
-        
+
         ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
         if (m_Settings.SlowRandom)
         {
-            // PCG is actually slower than xoshiro!
-            ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
+            // PCG should be slower than xoroshiro
+            // but after testing, xoroshiro seems to be slower (will have to test further)
+            ray.Direction = glm::normalize(payload.WorldNormal + Random::InUnitSphere());
         }
         else
         {
-            ray.Direction = glm::normalize(payload.WorldNormal + Random::InUnitSphere());
+            ray.Direction = glm::normalize(payload.WorldNormal + Utils::InUnitSphere(seed));
         }
     }
-    
+
     return { light, 1.0f };
 }
 
@@ -198,11 +199,11 @@ Renderer::HitPayload Renderer::TraceRay(const Ray& ray)
 
     int closestSphere = -1;
     float hitDistance = std::numeric_limits<float>::max();
-    
+
     for (size_t i = 0; i < m_ActiveScene->Spheres.size(); ++i)
     {
         const Sphere& sphere = m_ActiveScene->Spheres[i];
-        
+
         glm::vec3 origin = ray.Origin - sphere.Position;
 
         float a = glm::dot(ray.Direction, ray.Direction);
@@ -215,7 +216,7 @@ Renderer::HitPayload Renderer::TraceRay(const Ray& ray)
         // miss - return black
         if (discriminant < 0.0f)
             continue;
-    
+
         float tClosest = (-b - glm::sqrt(discriminant)) / (2.0f * a);
         if (tClosest > 0.0f && tClosest < hitDistance)
         {
@@ -235,7 +236,7 @@ Renderer::HitPayload Renderer::ClosestHit(const Ray& ray, float hitDistance, int
     Renderer::HitPayload payload;
     payload.HitDistance = hitDistance;
     payload.ObjectIndex = objectIndex;
-    
+
     const Sphere& closestSphere = m_ActiveScene->Spheres[objectIndex];
 
     glm::vec3 origin = ray.Origin - closestSphere.Position;
@@ -243,7 +244,7 @@ Renderer::HitPayload Renderer::ClosestHit(const Ray& ray, float hitDistance, int
     payload.WorldNormal = glm::normalize(payload.WorldPosition);
 
     payload.WorldPosition += closestSphere.Position;
-    
+
     return payload;
 }
 
